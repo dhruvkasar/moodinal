@@ -170,7 +170,7 @@ export default function App() {
     <>
       <audio 
         ref={audioRef}
-        src="/backgroundsound.mp3" 
+        src="public/backgroundsound.mp3" 
         autoPlay 
         loop 
         muted={isMuted} 
