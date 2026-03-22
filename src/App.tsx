@@ -170,7 +170,7 @@ export default function App() {
     <>
       <audio 
         ref={audioRef}
-        src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" 
+        src="/backgroundsound.mp3" 
         autoPlay 
         loop 
         muted={isMuted} 
