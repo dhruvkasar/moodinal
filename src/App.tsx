@@ -33,7 +33,14 @@ export default function App() {
   const [isMuted, setIsMuted] = useState(false);
   const [loadingTextIdx, setLoadingTextIdx] = useState(0);
   const [showSplash, setShowSplash] = useState(true);
+  const [showAudioHint, setShowAudioHint] = useState(true);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowAudioHint(false), 8000);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -132,11 +139,43 @@ export default function App() {
   const toggleMute = () => {
     const newMuted = !isMuted;
     setIsMuted(newMuted);
+    setShowAudioHint(false);
     audioEngine.setMuted(newMuted);
+    
+    if (!newMuted && audioRef.current) {
+      audioRef.current.play().catch(console.error);
+    }
   };
+
+  // Attempt to play on first interaction if autoplay was blocked
+  useEffect(() => {
+    const handleInteraction = () => {
+      if (!isMuted && audioRef.current && audioRef.current.paused) {
+        audioRef.current.play().catch(() => {});
+      }
+    };
+    
+    window.addEventListener('click', handleInteraction);
+    window.addEventListener('keydown', handleInteraction);
+    window.addEventListener('touchstart', handleInteraction);
+    
+    return () => {
+      window.removeEventListener('click', handleInteraction);
+      window.removeEventListener('keydown', handleInteraction);
+      window.removeEventListener('touchstart', handleInteraction);
+    };
+  }, [isMuted]);
 
   return (
     <>
+      <audio 
+        ref={audioRef}
+        src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" 
+        autoPlay 
+        loop 
+        muted={isMuted} 
+      />
+
       <AnimatePresence>
         {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
       </AnimatePresence>
@@ -153,13 +192,27 @@ export default function App() {
         </div>
 
         {/* Audio Toggle */}
-      <button
-        onClick={toggleMute}
-        aria-label={isMuted ? "Unmute sound" : "Mute sound"}
-        className="absolute top-4 right-4 sm:top-6 sm:right-6 p-3 rounded-full bg-white/50 hover:bg-white/80 transition-colors z-50 hard-shadow-sm"
-      >
-        {isMuted ? <VolumeX size={24} className="text-slate-600" /> : <Volume2 size={24} className="text-slate-600" />}
-      </button>
+        <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-50 flex flex-col items-end gap-2">
+          <button
+            onClick={toggleMute}
+            aria-label={isMuted ? "Unmute sound" : "Mute sound"}
+            className="p-3 rounded-full bg-white/50 hover:bg-white/80 transition-colors hard-shadow-sm"
+          >
+            {isMuted ? <VolumeX size={24} className="text-slate-600" /> : <Volume2 size={24} className="text-slate-600" />}
+          </button>
+          <AnimatePresence>
+            {showAudioHint && !showSplash && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="bg-slate-800 text-white text-xs px-3 py-2 rounded-lg shadow-lg max-w-[150px] text-right pointer-events-none"
+              >
+                Press the volume button to hear background sound
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
       {/* Toast Notification */}
       <AnimatePresence>
