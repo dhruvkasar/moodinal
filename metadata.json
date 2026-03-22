@@ -1,0 +1,5 @@
+{
+  "name": "AI Mood Ring",
+  "description": "Type your feelings, get a color-coded aura, sound, and personalized vibe reading.",
+  "requestFramePermissions": []
+}

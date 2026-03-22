@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+@theme {
+  --font-outfit: "Outfit", sans-serif;
+  --font-jakarta: "Plus Jakarta Sans", sans-serif;
+
+  --color-cream: #FFFDF5;
+  --color-violet: #8B5CF6;
+  --color-pink: #F472B6;
+  --color-amber: #FBBF24;
+  --color-mint: #34D399;
+  --color-ink: #1E293B;
+}
+
+body {
+  font-family: var(--font-jakarta);
+  background-color: var(--color-cream);
+  color: var(--color-ink);
+  /* Dot grid background pattern */
+  background-image: radial-gradient(rgba(30, 41, 59, 0.1) 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-position: 0 0;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-outfit);
+}
+
+/* Hard offset shadow */
+.hard-shadow {
+  box-shadow: 8px 8px 0px var(--color-ink);
+  border: 2px solid var(--color-ink);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.hard-shadow-sm {
+  box-shadow: 4px 4px 0px var(--color-ink);
+  border: 2px solid var(--color-ink);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.hard-shadow:active, .hard-shadow-sm:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0px 0px 0px var(--color-ink);
+}
+
+.squiggle-underline {
+  text-decoration: underline;
+  text-decoration-style: wavy;
+  text-decoration-color: var(--color-pink);
+  text-decoration-thickness: 4px;
+  text-underline-offset: 8px;
+}
+
+@keyframes pulse-aura {
+  0% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.8; }
+}
+
+.animate-aura {
+  animation: pulse-aura 4s ease-in-out infinite;
+}
+
+@keyframes scan {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.scanning-bg {
+  background: linear-gradient(270deg, var(--color-violet), var(--color-pink), var(--color-amber), var(--color-mint));
+  background-size: 800% 800%;
+  animation: scan 3s ease infinite;
+}
