@@ -73,9 +73,13 @@ export default function App() {
       const analysis = await analyzeMood(mood);
       setResult(analysis);
       audioEngine.playVibe(analysis.sound_profile);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError('Failed to read your vibe. Try again?');
+      if (err.message?.includes('API Key')) {
+        setError(err.message);
+      } else {
+        setError('Failed to read your vibe. Try again?');
+      }
     } finally {
       setIsAnalyzing(false);
     }

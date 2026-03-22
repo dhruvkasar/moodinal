@@ -1,6 +1,11 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+// Support both AI Studio's process.env and standard Vite import.meta.env
+const apiKey = process.env.GEMINI_API_KEY || (import.meta as any).env?.VITE_GEMINI_API_KEY;
+
+// Initialize with a dummy key if missing to prevent crashing the entire app on load,
+// but we will throw a clear error when they actually try to analyze a mood.
+const ai = new GoogleGenAI({ apiKey: apiKey || "MISSING_API_KEY" });
 
 export interface MoodAnalysis {
   color_palette: string[];
@@ -11,6 +16,10 @@ export interface MoodAnalysis {
 }
 
 export async function analyzeMood(moodText: string): Promise<MoodAnalysis> {
+  if (!apiKey || apiKey === "MISSING_API_KEY") {
+    throw new Error("Missing Gemini API Key. Please add VITE_GEMINI_API_KEY to your Vercel Environment Variables and redeploy.");
+  }
+
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
     contents: `Analyze the following mood/emotion and generate an aura profile: "${moodText}"`,
